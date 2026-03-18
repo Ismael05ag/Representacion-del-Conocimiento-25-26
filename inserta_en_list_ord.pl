@@ -14,7 +14,8 @@ inserta_en_list_ord(Elem, [Cabeza|Resto], [Elem, Cabeza|Resto] ) :- Elem =< Cabe
 inserta_en_list_ord(Elem, [Cabeza|Resto], [Cabeza|R]) :- Elem > Cabeza, inserta_en_list_ord(Elem, Resto, R).
 
 
-/* ---------------------------------------------------------------- */
+/* ---------------------------------------------------------------- 
+   ---------------------------------------------------------------- */
 
 /*
 
