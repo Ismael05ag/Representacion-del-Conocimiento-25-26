@@ -1,0 +1,1 @@
+my_length(L, Lista):- length(Lista, L).
