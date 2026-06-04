@@ -6,8 +6,6 @@ mas_veces(+Lista, -Elem, -Num).
 	repite dicho elemento.
 */
 
-mas_veces([], _, 0).
-mas_veces([Elem], Elem, 1).
 mas_veces(Lista, Elem, N):- msort(Lista, ListaO),
 							comprime(ListaO, ListaC),
 							mayor_n(ListaC, Elem, N).
