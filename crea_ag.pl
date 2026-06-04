@@ -9,14 +9,6 @@ crea_ag(+N, +Lista, -ArbolGenerico)
 crea_ag(N, [Cab|Resto], a(Cab, R) ):- length(Resto, L), L < N,
 			 	      crea_ag_lista_arboles(Resto, R).
 
-crea_ag(N, [Cab|Resto], a(Cab, R)):- length(Resto, L), L >=N,
-			    Div is L div N,
-			    length(Lista, N),
-			    maplist(my_length(Div), Lista),
-			    append(Lista, Resto),
-			    maplist(crea_ag(N), Lista, R).
-
-
 
 crea_ag(N, [Cab|Resto], a(Cab, R)):- N > 1 length(Resto, L), L >=N,
 			    Div is L div N,
@@ -27,7 +19,6 @@ crea_ag(N, [Cab|Resto], a(Cab, R)):- N > 1 length(Resto, L), L >=N,
 			    maplist(crea_ag(N), [L1|Lista], R).
 
 my_length(L, Lista):- length(Lista, L).
-
 
 
 /*
