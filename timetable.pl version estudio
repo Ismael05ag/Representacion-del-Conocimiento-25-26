@@ -85,15 +85,3 @@ slot_quotient(S, Q) :-
         slots_per_day(SPD),
         Q #= S // SPD.
 
-/*
-
- mi_tfilter(+Teacher, +Rs, -Sub),
-    es cierto si Sub inifica con una lista de requisitos del profesor Teacher
-
-*/	
-	  
-	  
-mi_tfilter(_, [], []).
-mi_tfilter(Teacher, [req(C,S,Teacher,N)-Slot|Tail], [req(C,S,Teacher,N)-Slot|Rs]):- mi_tfilter(Teacher, Tail, Rs).
-mi_tfilter(Teacher, [req(C,S,Teacher2,N)-Slot|Tail], Rs):- Teacher \= Teacher2,
-  							   mi_tfilter(Teacher, Tail, Rs).
