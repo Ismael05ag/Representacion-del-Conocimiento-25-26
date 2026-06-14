@@ -57,7 +57,7 @@ requirements_variables(Rs, Vars) :-
 
 
 constrain_subject(req(Class,Subj,_Teacher,_Num)-Slots) :-
-        strictly_ascending(Slots), % break symmetry
+        strictly_ascending(Slots),
         maplist(slot_quotient, Slots, Qs0),
         strictly_ascending(Qs0),
         classes(Classes),
