@@ -1,0 +1,101 @@
+/*
+
+1. Lista de Requisitos -> Setof -> req( , , , )
+
+2. Pegar a cada req( , , ,N)-Slot una lista de longitud N (length(Slot, N))
+
+3. Obtengo solo las listas de los pares req()-Slots -> pair_values
+
+4. Aplano la matriz irregular -> Vars ins 0 .. SPW - 1
+
+5. Obtengo la lista de profesores y la lista de asignaturas
+	C^S^Nsetof(Teacher, Req, Teachers)
+        T^S^Nsetof(Class, Req, Classes)
+
+6. Aplico restricciones por fila (Asignatura)
+	6.1 Los números de los Slots de una asignatura tienen que ser estrictamente ascendente.
+	6.2 Los números de los Slots de una asignatura división entera SPD (7 en nuestro ejemplo)
+	    tienen que ser estrictamente ascendentes.
+
+7. Restricciones por Profesor
+	Filtramos todos sus req( , , , )-Slots, pair_values y aplanamos con append; y todas las variables de la lista tienen que ser all_distinct
+
+8. Restricciones por Grupo(Class)
+	Filtramos todos sus req( , , , )-Slots, pair_values y aplanamos con append; y todas las variables de la lista tienen que ser all_distinct
+
+*/
+
+
+/* Versión para estudiar */
+
+requirements(Rs) :-
+        Goal = class_subject_teacher_times(Class,Subject,Teacher,Number),
+        setof(req(Class,Subject,Teacher,Number), Goal, Rs0),
+        maplist(req_with_slots, Rs0, Rs).
+
+
+req_with_slots(R, R-Slots) :- R = req(_,_,_,N), length(Slots, N).
+
+classes(Classes) :-
+        setof(C, S^N^T^class_subject_teacher_times(C,S,T,N), Classes).
+		
+teachers(Teachers) :-
+        setof(T, C^S^N^class_subject_teacher_times(C,S,T,N), Teachers).
+
+		
+requirements_variables(Rs, Vars) :-
+        requirements(Rs),
+        pairs_slots(Rs, Vars),
+        slots_per_week(SPW),
+        Max #= SPW - 1,
+        Vars ins 0..Max,
+        maplist(constrain_subject, Rs),
+	      classes(Classes),
+	      teachers(Teachers),
+	      maplist(constrain_teacher(Rs), Teachers),
+	      maplist(constrain_class(Rs), Classes).
+
+
+constrain_subject(req(Class,Subj,_Teacher,_Num)-Slots) :-
+        strictly_ascending(Slots), % break symmetry
+        maplist(slot_quotient, Slots, Qs0),
+        strictly_ascending(Qs0),
+        classes(Classes),
+        teachers(Teachers),	
+        maplist(constrain_teacher(Rs), Teachers).
+
+constrain_teacher(Rs, Teacher) :-
+        mi_tfilter(Teacher, Rs, Sub),
+        pairs_slots(Sub, Vs),
+        all_different(Vs).
+
+constrain_class(Rs, Class) :-
+        tfilter(class_req(Class), Rs, Sub),
+        pairs_slots(Sub, Vs),
+        all_different(Vs).
+	findall(S, class_freeslot(Class, S), Frees),
+	maplist(all_diff_from(Vs), Frees).
+
+
+strictly_ascending(Ls) :- chain(#<, Ls).
+
+pairs_slots(Ps, Vs) :-
+        pairs_values(Ps, Vs0),
+        append(Vs0, Vs).
+
+slot_quotient(S, Q) :-
+        slots_per_day(SPD),
+        Q #= S // SPD.
+
+/*
+
+ mi_tfilter(+Teacher, +Rs, -Sub),
+    es cierto si Sub inifica con una lista de requisitos del profesor Teacher
+
+*/	
+	  
+	  
+mi_tfilter(_, [], []).
+mi_tfilter(Teacher, [req(C,S,Teacher,N)-Slot|Tail], [req(C,S,Teacher,N)-Slot|Rs]):- mi_tfilter(Teacher, Tail, Rs).
+mi_tfilter(Teacher, [req(C,S,Teacher2,N)-Slot|Tail], Rs):- Teacher \= Teacher2,
+  							   mi_tfilter(Teacher, Tail, Rs).
