@@ -70,7 +70,7 @@ constrain_teacher(Rs, Teacher) :-
         all_different(Vs).
 
 constrain_class(Rs, Class) :-
-        tfilter(class_req(Class), Rs, Sub),
+        tfilter(Class, Rs, Sub),
         pairs_slots(Sub, Vs),
         all_different(Vs).
 
