@@ -65,7 +65,7 @@ constrain_subject(req(Class,Subj,_Teacher,_Num)-Slots) :-
         maplist(constrain_teacher(Rs), Teachers).
 
 constrain_teacher(Rs, Teacher) :-
-        mi_tfilter(Teacher, Rs, Sub),
+        tfilter(Teacher, Rs, Sub),
         pairs_slots(Sub, Vs),
         all_different(Vs).
 
@@ -73,8 +73,6 @@ constrain_class(Rs, Class) :-
         tfilter(class_req(Class), Rs, Sub),
         pairs_slots(Sub, Vs),
         all_different(Vs).
-	findall(S, class_freeslot(Class, S), Frees),
-	maplist(all_diff_from(Vs), Frees).
 
 
 strictly_ascending(Ls) :- chain(#<, Ls).
